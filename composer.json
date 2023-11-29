@@ -1,0 +1,17 @@
+{
+    "name": "vendor/php_mvc",
+    "autoload": {
+        "psr-4": {
+            "app\\": "./"
+        }
+    },
+    "authors": [
+        {
+            "name": "Farzad Foroozanfar",
+            "email": "foruozanfar2000f@gmail.com"
+        }
+    ],
+    "require": {
+      "ext-mysqli": "*"
+    }
+}
