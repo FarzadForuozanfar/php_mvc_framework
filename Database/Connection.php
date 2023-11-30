@@ -43,7 +43,7 @@ class Connection
 
             if ($mysqli->connect_errno) {
                 $error = 'Failed to connect to MySQL: ' . $mysqli->connect_error . ', ' . mysqli_error($mysqli);
-                Log::error($error);
+                Log::add($error, Log::ERROR_TYPE);
             }
             else
             {
@@ -58,7 +58,7 @@ class Connection
                             print_r([
                                 BaseConfig::get('DB_HOST'), BaseConfig::get('DB_USER'), BaseConfig::get('DB_PASS'), BaseConfig::get('DB_NAME')
                             ], true);
-            Log::error($errorMessage);
+            Log::add($errorMessage, Log::ERROR_TYPE);
             return false;
         }
     }
@@ -91,7 +91,7 @@ class Connection
         catch (Exception $exception)
         {
             $errorMessage = "Error: {$exception->getMessage()}, Line: {$exception->getLine()}";
-            Log::error($errorMessage);
+            Log::add($errorMessage, Log::ERROR_TYPE);
         }
     }
 
@@ -112,7 +112,7 @@ class Connection
         catch (Exception $exception)
         {
             $errorMessage = "Error: {$exception->getMessage()}, Line: {$exception->getLine()}";
-            Log::error($errorMessage);
+            Log::add($errorMessage, Log::ERROR_TYPE);
         }
         return $result;
     }

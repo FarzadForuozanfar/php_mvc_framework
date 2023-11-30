@@ -2,28 +2,17 @@
 
 namespace app\core;
 
+use app\configs\BaseConfig;
+
 class Log
 {
-    public static function info(string $message): void
+    const INFO_TYPE = 'info';
+    const ERROR_TYPE = 'error';
+    const WARNING_TYPE = 'warning';
+
+    public static function add(string $message, string $type = self::INFO_TYPE): void
     {
-
-        $filePath = Application::$ROOT_DIR . "\\logs\\" . date('Y-m-d')."_info.log";
-        $logEntry = '['. date('H:i:s') . ']' . " - $message" . PHP_EOL;
-        file_put_contents($filePath, $logEntry, FILE_APPEND);
-    }
-
-    public static function error(string $message): void
-    {
-
-        $filePath = Application::$ROOT_DIR . "\\logs\\" . date('Y-m-d')."_error.log";
-        $logEntry = '['. date('H:i:s') . ']' . " - $message" . PHP_EOL;
-        file_put_contents($filePath, $logEntry, FILE_APPEND);
-    }
-
-    public static function warning(string $message): void
-    {
-
-        $filePath = Application::$ROOT_DIR . "\\logs\\" . date('Y-m-d')."_warning.log";
+        $filePath = BaseConfig::get('BASE_DIR') . "/logs/" . date('Y-m-d')."_$type.log";
         $logEntry = '['. date('H:i:s') . ']' . " - $message" . PHP_EOL;
         file_put_contents($filePath, $logEntry, FILE_APPEND);
     }
