@@ -1,3 +1,4 @@
 *.log
 composer.lock
 /vendor
+/.idea
