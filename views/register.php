@@ -1,3 +1,4 @@
+<?php /** @var $request \app\core\Request */ ?>
 <h1>Register</h1>
 
 <form method="post" action="">

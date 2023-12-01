@@ -6,6 +6,7 @@ use app\Database\Connection;
 
 class Request implements RequestRulesInterface
 {
+    public array $errors = [];
     public function rules(): array
     {
         return [];
@@ -81,19 +82,19 @@ class Request implements RequestRulesInterface
                 elseif (is_array($rule)) $ruleName = $rule[0];
 
                 if ($ruleName === self::RULE_REQUIRED and empty($value)) {
-                    $this->addError($attr, self::RULE_REQUIRED);
+                    $this->addErrorForRule($attr, self::RULE_REQUIRED);
                 }
                 if ($ruleName === self::RULE_EMAIL and !filter_var($value, FILTER_VALIDATE_EMAIL)) {
-                    $this->addError($attr, self::RULE_EMAIL);
+                    $this->addErrorForRule($attr, self::RULE_EMAIL);
                 }
                 if ($ruleName === self::RULE_MIN and strlen($value) < $rule['min']) {
-                    $this->addError($attr, self::RULE_MIN, $rule);
+                    $this->addErrorForRule($attr, self::RULE_MIN, $rule);
                 }
                 if ($ruleName === self::RULE_MAX and strlen($value) > $rule['max']) {
-                    $this->addError($attr, self::RULE_MAX, $rule);
+                    $this->addErrorForRule($attr, self::RULE_MAX, $rule);
                 }
                 if ($ruleName === self::RULE_MATCH and $value !== $this->{$rule['match']}) {
-                    $this->addError($attr, self::RULE_MATCH, $rule);
+                    $this->addErrorForRule($attr, self::RULE_MATCH, $rule);
                 }
                 if ($ruleName === self::RULE_UNIQUE)
                 {
@@ -102,7 +103,7 @@ class Request implements RequestRulesInterface
                     $record    = Connection::db_select($tableName, "$attr='$value'");
                     if (is_array($record))
                     {
-                        $this->addError($attr, self::RULE_UNIQUE, ['field' => $attr]);
+                        $this->addErrorForRule($attr, self::RULE_UNIQUE, ['field' => $attr]);
                     }
                 }
             }
@@ -111,7 +112,7 @@ class Request implements RequestRulesInterface
         return empty($this->errors);
     }
 
-    public function addError(string $attribute, string $rule, array $params = []): void
+    private function addErrorForRule(string $attribute, string $rule, array $params = []): void
     {
         $message = $this->errorMessages()[$rule] ?? '';
         foreach ($params as $key => $value)
@@ -121,6 +122,10 @@ class Request implements RequestRulesInterface
         $this->errors[$attribute][] = $message;
     }
 
+    public function addError(string $attribute, string $message): void
+    {
+        $this->errors[$attribute][] = $message;
+    }
     public function errorMessages(): array
     {
         return [
