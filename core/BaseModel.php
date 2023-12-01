@@ -17,8 +17,8 @@ abstract class BaseModel
         return Connection::db_insert($attributes, $data, $tableName);
     }
 
-    public static function find(string $field = 'ID')
+    public static function find($value, string $field = "ID"): bool|array|null
     {
-
+        return Connection::db_select('users', "$field='$value'");
     }
 }
