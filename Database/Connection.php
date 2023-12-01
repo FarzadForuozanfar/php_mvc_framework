@@ -116,4 +116,45 @@ class Connection
         }
         return $result;
     }
+
+    public static function queryFirst(string $sql): bool|array|null
+    {
+        $conn = !empty(self::$connection) ? self::$connection : self::create();
+        return $conn->query($sql)->fetch_assoc();
+    }
+
+    public static function db_insert($attributes, $data, $table): int|string|null
+    {
+        $conn = !empty(self::$connection) ? self::$connection : self::create();
+        $sql = "INSERT INTO $table SET ";
+        for($i = 0; $i < count($attributes); $i++)
+        {
+            $sql .= "`{$attributes[$i]}` = '{$data[$attributes[$i]]}', ";
+        }
+
+        $sql = rtrim($sql, ", ");
+
+        try {
+            $result = $conn->query($sql);
+            if ($result)
+                return $conn->insert_id;
+
+            Log::add("Error Query: `$sql`", Log::ERROR_TYPE);
+        }
+        catch (Exception $exception)
+        {
+            Log::add($exception->getMessage(), Log::ERROR_TYPE);
+        }
+
+        return null;
+    }
+
+    public static function db_select(string $table, string $condition = null, $field = '*', $fetchAll = false): bool|array|null
+    {
+        $field = is_array($field) ? implode(', ', $field) : $field;
+        $where = $condition ? " WHERE $condition" : '';
+        $sql   = "SELECT {$field} FROM `$table` $where";
+        $sql  .= $fetchAll ? ';' : ' LIMIT 1;';
+        return $fetchAll ? self::query($sql) : self::queryFirst($sql);
+    }
 }
