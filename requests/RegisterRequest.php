@@ -1,10 +1,11 @@
 <?php
 
-namespace app\models;
+namespace app\requests;
 
-use app\core\BaseModel;
+use app\core\Request;
+use app\models\User;
 
-class RegisterModel extends BaseModel
+class RegisterRequest extends Request
 {
     public string $firstname;
     public string $lastname;
@@ -12,18 +13,12 @@ class RegisterModel extends BaseModel
     public string $password;
     public string $confirmPassword;
 
-    public function register()
-    {
-        echo "creting new user";
-        return true;
-    }
-
     public function rules(): array
     {
         return [
             'firstname' => [self::RULE_REQUIRED],
             'lastname' => [self::RULE_REQUIRED],
-            'email' => [self::RULE_REQUIRED, self::RULE_EMAIL],
+            'email' => [self::RULE_REQUIRED, self::RULE_EMAIL, [self::RULE_UNIQUE, 'class' => User::class]],
             'password' => [self::RULE_REQUIRED, [self::RULE_MIN, 'min' => 8]],
             'confirmPassword' => [self::RULE_REQUIRED, [self::RULE_MATCH, 'match' => 'password']],
         ];
