@@ -2,9 +2,12 @@
 
 namespace app\controllers;
 
+use app\core\Application;
 use app\core\BaseController;
 use app\core\Request;
-use app\models\RegisterModel;
+use app\helpers\Helper;
+use app\models\User;
+use app\requests\RegisterRequest;
 
 class AuthController extends BaseController
 {
@@ -27,16 +30,35 @@ class AuthController extends BaseController
 
     public function handleRegister(Request $request): bool|array|string
     {
-        $registerModel = new RegisterModel();
-        $registerModel->loadData($request->getBody());
+        $this->setLayout('auth');
+        $registerRequest = new RegisterRequest();
+        $registerRequest->loadData($request->getBody());
 
-        if ($registerModel->validate() AND $registerModel->register())
+        if ($registerRequest->validate())
         {
-            return "Success";
+            $userId = (new User())->create([
+                'firstname' => $registerRequest->firstname,
+                'lastname' => $registerRequest->lastname,
+                'email' => $registerRequest->email,
+                'password' => Helper::bcrypt($registerRequest->password)
+            ]);
+
+            if (is_numeric($userId))
+            {
+                Application::$app->session->setFlash('success', 'Welcome to our site');
+                $this->redirect('/');
+            }
+            else
+            {
+                echo '<pre>';
+                var_dump($userId);
+                die('</pre>');
+            }
+
         }
 
         return $this->render('register', [
-            'model' => $registerModel
+            'request' => $registerRequest
         ]);
     }
 }
