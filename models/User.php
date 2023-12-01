@@ -2,7 +2,9 @@
 
 namespace app\models;
 
+use app\core\Application;
 use app\core\BaseModel;
+use app\helpers\Helper;
 
 class User extends BaseModel
 {
@@ -15,6 +17,25 @@ class User extends BaseModel
     public static function tableName(): string
     {
         return 'users';
+    }
+
+    public static function login(array $data): bool
+    {
+        $user = self::find($data['email'], 'email');
+
+        if (is_array($user) AND password_verify($data['password'], $user['password']))
+        {
+            Application::$app->session->set('user', $user);
+            return true;
+        }
+
+        return false;
+    }
+
+    public static function logOut(): void
+    {
+        Application::$app->user = [];
+        Application::$app->session->remove('user');
     }
 
     public function attribute(): array

@@ -7,6 +7,7 @@ use app\core\BaseController;
 use app\core\Request;
 use app\helpers\Helper;
 use app\models\User;
+use app\requests\LoginRequest;
 use app\requests\RegisterRequest;
 
 class AuthController extends BaseController
@@ -23,9 +24,28 @@ class AuthController extends BaseController
         return $this->render('register');
     }
 
-    public function handleLogin(Request $request)
+    public function handleLogin(Request $request): bool|array|string
     {
+        $this->setLayout('auth');
+        $loginRequest = new LoginRequest();
+        $loginRequest->loadData($request->getBody());
 
+        if ($loginRequest->validate())
+        {
+            if (User::login(['email' => $loginRequest->email, 'password' => $loginRequest->password]))
+            {
+                $this->redirect('/');
+                return true;
+            }
+            else
+            {
+                $loginRequest->addError('email', 'The information are not correct');
+            }
+        }
+
+        return $this->render('login', [
+            'request' => $loginRequest
+        ]);
     }
 
     public function handleRegister(Request $request): bool|array|string
@@ -40,7 +60,7 @@ class AuthController extends BaseController
                 'firstname' => $registerRequest->firstname,
                 'lastname' => $registerRequest->lastname,
                 'email' => $registerRequest->email,
-                'password' => Helper::bcrypt($registerRequest->password)
+                'password' => password_hash($registerRequest->password, PASSWORD_DEFAULT)
             ]);
 
             if (is_numeric($userId))
@@ -60,5 +80,11 @@ class AuthController extends BaseController
         return $this->render('register', [
             'request' => $registerRequest
         ]);
+    }
+
+    public function logout(Request $request): void
+    {
+        User::logOut();
+        $this->redirect('/');
     }
 }
