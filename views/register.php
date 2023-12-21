@@ -1,4 +1,4 @@
-<?php /** @var $request \app\core\Request */ ?>
+<?php /** @var $request Core\Request */ ?>
 <h1>Register</h1>
 
 <form method="post" action="">

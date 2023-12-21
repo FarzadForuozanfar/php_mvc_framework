@@ -31,7 +31,7 @@ class Application
 
     public static function AuthCheck(): bool
     {
-        return !is_null(Application::$app->user) AND is_array(Application::$app->user);
+        return !empty(Application::$app->user) AND is_array(Application::$app->user);
     }
 
     public static function getDisplayName(): string

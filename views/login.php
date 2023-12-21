@@ -1,4 +1,4 @@
-<?php /** @var $request \app\core\Request */ ?>
+<?php /** @var $request Core\Request */ ?>
 <h1>Login To Your Account</h1>
 
 <form method="post" action="">
