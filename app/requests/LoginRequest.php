@@ -1,8 +1,8 @@
 <?php
 
-namespace app\requests;
+namespace App\requests;
 
-use app\core\Request;
+use Core\Request;
 
 class LoginRequest extends Request
 {

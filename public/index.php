@@ -1,9 +1,9 @@
 <?php
 
-use app\controllers\AuthController;
-use app\controllers\SiteController;
+use app\app\controllers\AuthController;
+use app\app\controllers\SiteController;
 use app\core\Application;
-use app\configs\BaseConfig;
+use app\core\BaseConfig;
 
 date_default_timezone_set('Asia/Tehran');
 

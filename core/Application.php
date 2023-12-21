@@ -1,8 +1,6 @@
 <?php
 
-namespace app\core;
-
-use app\Database\Connection;
+namespace Core;
 
 class Application
 {

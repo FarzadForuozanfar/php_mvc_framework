@@ -1,9 +1,9 @@
 <?php
 
-namespace app\controllers;
+namespace App\controllers;
 
-use app\core\BaseController;
-use app\core\Request;
+use Core\BaseController;
+use Core\Request;
 
 class SiteController extends BaseController
 {

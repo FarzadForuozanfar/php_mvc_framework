@@ -1,9 +1,9 @@
 <?php
 
-namespace app\configs;
+namespace Core;
 
-require_once 'database.php';
-require_once 'app.php';
+require_once '../configs/database.php';
+require_once '../configs/app.php';
 class BaseConfig
 {
     private static array $configs;

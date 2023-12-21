@@ -1,14 +1,13 @@
 <?php
 
-namespace app\controllers;
+namespace App\controllers;
 
-use app\core\Application;
-use app\core\BaseController;
-use app\core\Request;
-use app\helpers\Helper;
-use app\models\User;
-use app\requests\LoginRequest;
-use app\requests\RegisterRequest;
+use Core\Application;
+use Core\BaseController;
+use Core\Request;
+use App\models\User;
+use App\requests\LoginRequest;
+use App\requests\RegisterRequest;
 
 class AuthController extends BaseController
 {

@@ -1,10 +1,9 @@
 <?php
 
-namespace app\models;
+namespace App\models;
 
-use app\core\Application;
-use app\core\BaseModel;
-use app\helpers\Helper;
+use Core\Application;
+use Core\BaseModel;
 
 class User extends BaseModel
 {

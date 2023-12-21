@@ -1,8 +1,6 @@
 <?php
 
-namespace app\core;
-
-use app\Database\Connection;
+namespace Core;
 
 class Request implements RequestRulesInterface
 {
@@ -46,6 +44,10 @@ class Request implements RequestRulesInterface
             }
         }
 
+        foreach ($_REQUEST as $KEY => $value)
+        {
+            $body[$KEY] = filter_var($value, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        }
         return $body;
     }
 

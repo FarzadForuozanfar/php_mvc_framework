@@ -1,9 +1,9 @@
 <?php
 
-namespace app\requests;
+namespace App\requests;
 
-use app\core\Request;
-use app\models\User;
+use Core\Request;
+use App\models\User;
 
 class RegisterRequest extends Request
 {

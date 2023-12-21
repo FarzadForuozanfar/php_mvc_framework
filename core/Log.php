@@ -1,8 +1,6 @@
 <?php
 
-namespace app\core;
-
-use app\configs\BaseConfig;
+namespace Core;
 
 class Log
 {

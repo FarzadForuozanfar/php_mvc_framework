@@ -1,11 +1,9 @@
 <?php
 
-namespace app\Database;
+namespace Core;
 
-use app\core\Log;
 use Exception;
 use mysqli;
-use app\configs\BaseConfig;
 
 class Connection
 {
