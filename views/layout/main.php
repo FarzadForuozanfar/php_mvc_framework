@@ -25,7 +25,7 @@ use Core\Application;
                     <a class="nav-link" href="/contact">Contact</a>
                 </li>
             </ul>
-            <?php if (Application::AuthCheck()): ?>
+            <?php if (AuthCheck()): ?>
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
                         <a class="nav-link active" aria-current="page" href="/login">Profile</a>
@@ -48,9 +48,9 @@ use Core\Application;
     </div>
 </nav>
 <div class="container">
-    <?php if (Application::$app->session->getFlash('success')):?>
+    <?php if (session()->getFlash('success')):?>
         <div class="alert alert-success">
-            <?= Application::$app->session->getFlash('success'); ?>
+            <?= session()->getFlash('success'); ?>
         </div>
     <?php endif;?>
     {{content}}
