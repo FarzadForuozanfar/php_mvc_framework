@@ -7,12 +7,6 @@ use Core\BaseModel;
 
 class User extends BaseModel
 {
-    public string $firstname;
-    public string $lastname;
-    public string $email;
-    public string $password;
-    public string $confirmPassword;
-
     public static function tableName(): string
     {
         return 'users';
@@ -24,7 +18,7 @@ class User extends BaseModel
 
         if (is_array($user) AND password_verify($data['password'], $user['password']))
         {
-            Application::$app->session->set('user', $user);
+            session()->set('user', $user);
             return true;
         }
 
@@ -34,7 +28,7 @@ class User extends BaseModel
     public static function logOut(): void
     {
         Application::$app->user = [];
-        Application::$app->session->remove('user');
+        session()->remove('user');
     }
 
     public function attribute(): array
