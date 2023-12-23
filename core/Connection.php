@@ -95,16 +95,14 @@ class Connection
 
     public static function query(string $sql): array
     {
-        $i = 0;
         $result = [];
-        $conn = !self::$connection ? self::create() : self::$connection;
+        $conn   = self::create();
 
         try {
             $stmt = $conn->query($sql);
             while (@$row = mysqli_fetch_array($stmt, MYSQLI_ASSOC))
             {
-                $result[$i] = $row;
-                $i++;
+                $result[] = $row;
             }
         }
         catch (Exception $exception)
@@ -117,17 +115,17 @@ class Connection
 
     public static function queryFirst(string $sql): bool|array|null
     {
-        $conn = !empty(self::$connection) ? self::$connection : self::create();
+        $conn = self::create();
         return $conn->query($sql)->fetch_assoc();
     }
 
     public static function db_insert($attributes, $data, $table): int|string|null
     {
-        $conn = !empty(self::$connection) ? self::$connection : self::create();
-        $sql = "INSERT INTO $table SET ";
-        for($i = 0; $i < count($attributes); $i++)
+        $conn = self::create();
+        $sql  = "INSERT INTO $table SET ";
+        foreach($attributes as $attribute)
         {
-            $sql .= "`{$attributes[$i]}` = '{$data[$attributes[$i]]}', ";
+            $sql .= "`{$attribute}` = '{$data[$attribute]}', ";
         }
 
         $sql = rtrim($sql, ", ");
