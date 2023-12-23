@@ -57,14 +57,14 @@ class AuthController extends BaseController
         {
             $userId = (new User())->create([
                 'firstname' => $registerRequest->firstname,
-                'lastname' => $registerRequest->lastname,
-                'email' => $registerRequest->email,
-                'password' => password_hash($registerRequest->password, PASSWORD_DEFAULT)
+                'lastname'  => $registerRequest->lastname,
+                'email'     => $registerRequest->email,
+                'password'  => password_hash($registerRequest->password, PASSWORD_DEFAULT)
             ]);
 
             if (is_numeric($userId))
             {
-                Application::$app->session->setFlash('success', 'Welcome to our site');
+                session()->setFlash('success', 'Welcome to our site');
                 $this->redirect('/');
             }
             else
