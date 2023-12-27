@@ -7,9 +7,10 @@ use Core\BaseModel;
 
 class User extends BaseModel
 {
+    private static string $tableName = 'users';
     public static function tableName(): string
     {
-        return 'users';
+        return self::$tableName ?? 'users';
     }
 
     public static function login(array $data): bool

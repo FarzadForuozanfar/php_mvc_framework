@@ -55,15 +55,16 @@ class AuthController extends BaseController
 
         if ($registerRequest->validate())
         {
-            $userId = (new User())->create([
+            $user = (new User())->create([
                 'firstname' => $registerRequest->firstname,
                 'lastname'  => $registerRequest->lastname,
                 'email'     => $registerRequest->email,
                 'password'  => password_hash($registerRequest->password, PASSWORD_DEFAULT)
             ]);
 
-            if (is_numeric($userId))
+            if (is_array($user))
             {
+                session()->set('user', $user);
                 session()->setFlash('success', 'Welcome to our site');
                 $this->redirect('/');
             }
