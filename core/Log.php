@@ -10,7 +10,7 @@ class Log
 
     public static function add(string $message, string $type = self::INFO_TYPE): void
     {
-        $filePath = BaseConfig::get('BASE_DIR') . "/logs/" . date('Y-m-d')."_$type.log";
+        $filePath = config('BASE_DIR') . "/logs/" . date('Y-m-d')."_$type.log";
         $logEntry = '['. date('H:i:s') . ']' . " - $message" . PHP_EOL;
         file_put_contents($filePath, $logEntry, FILE_APPEND);
     }

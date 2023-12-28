@@ -62,9 +62,9 @@ class Router
 
     protected function layoutContent(): bool|string
     {
-        $layout = Application::$app->controller->layout;
+        $layout = Application::$app->controller->layout ?? 'main';
         ob_start();
-        include_once Application::$ROOT_DIR."/views/layout/$layout.php";
+        include_once config('BASE_DIR')."/views/layout/$layout.php";
         return ob_get_clean();
     }
 
@@ -76,7 +76,7 @@ class Router
         }
 
         ob_start();
-        include_once Application::$ROOT_DIR."/views/$view.php";
+        include_once config('BASE_DIR')."/views/$view.php";
         return ob_get_clean();
     }
 }

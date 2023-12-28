@@ -37,7 +37,7 @@ class Connection
             mysqli_options($mysqli, MYSQLI_OPT_READ_TIMEOUT, 5);
             mysqli_options($mysqli, MYSQLI_OPT_INT_AND_FLOAT_NATIVE, true);
 
-            $mysqli->real_connect( BaseConfig::get('DB_HOST'), BaseConfig::get('DB_USER'), BaseConfig::get('DB_PASS'), BaseConfig::get('DB_NAME'));
+            $mysqli->real_connect( config('DB_HOST'), config('DB_USER'), config('DB_PASS'), config('DB_NAME'));
 
             if ($mysqli->connect_errno) {
                 $error = 'Failed to connect to MySQL: ' . $mysqli->connect_error . ', ' . mysqli_error($mysqli);
@@ -54,7 +54,7 @@ class Connection
         {
             $errorMessage = "Error: {$exception->getMessage()}, Line: {$exception->getLine()}, File: {$exception->getFile()}, DB Params:" .
                             print_r([
-                                BaseConfig::get('DB_HOST'), BaseConfig::get('DB_USER'), BaseConfig::get('DB_PASS'), BaseConfig::get('DB_NAME')
+                                config('DB_HOST'), config('DB_USER'), config('DB_PASS'), config('DB_NAME')
                             ], true);
             Log::add($errorMessage, Log::ERROR_TYPE);
             return false;

@@ -1,6 +1,8 @@
 <?php
 
 use Core\Application;
+use Core\BaseConfig;
+use Core\Request;
 use Core\Session;
 
 if (!function_exists('bcrypt'))
@@ -45,6 +47,23 @@ if (!function_exists('session'))
     function session(): Session
     {
         return Application::$app->session;
+    }
+}
+
+if (!function_exists('view'))
+{
+    function view(string $view, array $params = []): bool|array|string
+    {
+        $params['request'] = $params['request'] ?? new Request();
+        return Application::$app->router->renderView($view, $params);
+    }
+}
+
+if (!function_exists('config'))
+{
+    function config(string $key): ?string
+    {
+        return BaseConfig::get($key);
     }
 }
 
