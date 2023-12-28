@@ -55,7 +55,7 @@ class AuthController extends BaseController
 
         if ($registerRequest->validate())
         {
-            $user = (new User())->create([
+            $user = User::create([
                 'firstname' => $registerRequest->firstname,
                 'lastname'  => $registerRequest->lastname,
                 'email'     => $registerRequest->email,
@@ -70,9 +70,7 @@ class AuthController extends BaseController
             }
             else
             {
-                echo '<pre>';
-                var_dump($userId);
-                die('</pre>');
+                // TODO Handle Error
             }
 
         }
