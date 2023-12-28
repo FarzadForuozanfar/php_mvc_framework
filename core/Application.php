@@ -4,7 +4,6 @@ namespace Core;
 
 class Application
 {
-    public static  string $ROOT_DIR;
     public Router $router;
     public Request $request;
     public Response $response;
@@ -12,10 +11,9 @@ class Application
     public static Application $app;
     public BaseController $controller;
     public array $user = [];
-    public function __construct($rootPath)
+    public function __construct()
     {
         self::$app = $this;
-        self::$ROOT_DIR = $rootPath;
 
         $this->request = new Request();
         $this->response = new Response();
