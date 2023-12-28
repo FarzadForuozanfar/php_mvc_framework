@@ -2,12 +2,12 @@
 
 namespace Core;
 
-require_once '../configs/database.php';
-require_once '../configs/app.php';
+require_once '../config/database.php';
+require_once '../config/app.php';
 class BaseConfig
 {
     private static array $configs;
-    public static function getConfigs(): array
+    public static function setConfigs(): void
     {
         self::$configs = [
             'DB_HOST' => DB_HOST,
@@ -17,14 +17,16 @@ class BaseConfig
             'APP_NAME'=> APP_NAME,
             'APP_PORT'=> APP_PORT,
             'APP_URL' => APP_URL,
-            'BASE_DIR'=> BASE_DIR
+            'BASE_DIR'=> BASE_DIR,
+            'TIMEZONE'=> TIMEZONE
         ];
-
-        return self::$configs;
     }
 
-    public static function get($key) : string|null
+    public static function get(string $key) : string|null
     {
-        return self::getConfigs()[$key];
+        if (empty(self::$configs))
+            self::setConfigs();
+
+        return self::$configs[$key];
     }
 }
