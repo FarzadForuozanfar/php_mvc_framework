@@ -7,7 +7,7 @@ class BaseController
     public string $layout = 'main';
     protected function render($view, $params = []): bool|array|string
     {
-        $params['request'] = $params['request'] ?? new  Request();
+        $params['request'] = $params['request'] ?? new Request();
         return Application::$app->router->renderView($view, $params);
     }
 

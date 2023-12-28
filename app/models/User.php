@@ -32,7 +32,7 @@ class User extends BaseModel
         session()->remove('user');
     }
 
-    public function attribute(): array
+    public static function attribute(): array
     {
         return ['firstname', 'lastname', 'email', 'password'];
     }
