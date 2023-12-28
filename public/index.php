@@ -14,6 +14,8 @@ $app->router->get('/', function () {
     return view('home');
 });
 
+$app->router->get('users', 'users');
+
 /* Contact Routes */
 $app->router->get('/contact', [SiteController::class, 'getContactForm']);
 $app->router->post('/contact', [SiteController::class, 'handleContact']);
