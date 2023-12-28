@@ -8,7 +8,7 @@ require_once __DIR__.'/../vendor/autoload.php';
 
 date_default_timezone_set(config('TIMEZONE'));
 
-$app = new Application(config('BASE_DIR'));
+$app = new Application();
 
 $app->router->get('/', function () {
     return view('home');
