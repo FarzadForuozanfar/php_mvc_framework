@@ -5,12 +5,12 @@ namespace Core;
 abstract class BaseModel
 {
     abstract public static function tableName(): string;
-    abstract public function attribute(): array;
+    abstract public static function attribute(): array;
 
-    public function create($data): array|null
+    public static function create($data): array|null
     {
         $tableName  = static::tableName();
-        $attributes = $this->attribute();
+        $attributes = static::attribute();
 
         return Connection::db_insert($attributes, $data, $tableName);
     }
