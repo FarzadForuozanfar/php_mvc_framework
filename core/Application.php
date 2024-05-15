@@ -39,8 +39,6 @@ class Application
 
     public function run(): void
     {
-        if (! Connection::create()) die('No DB Connection');
-
         echo $this->router->resolve();
     }
 }
