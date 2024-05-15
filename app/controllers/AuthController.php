@@ -29,15 +29,11 @@ class AuthController extends BaseController
         $loginRequest = new LoginRequest();
         $loginRequest->loadData($request->getBody());
 
-        if ($loginRequest->validate())
-        {
-            if (User::login(['email' => $loginRequest->email, 'password' => $loginRequest->password]))
-            {
+        if ($loginRequest->validate()) {
+            if (User::login(['email' => $loginRequest->email, 'password' => $loginRequest->password])) {
                 $this->redirect('/');
                 return true;
-            }
-            else
-            {
+            } else {
                 $loginRequest->addError('email', 'The information are not correct');
             }
         }
@@ -53,26 +49,22 @@ class AuthController extends BaseController
         $registerRequest = new RegisterRequest();
         $registerRequest->loadData($request->getBody());
 
-        if ($registerRequest->validate())
-        {
-            $user = User::create([
-                'firstname' => $registerRequest->firstname,
-                'lastname'  => $registerRequest->lastname,
+        if ($registerRequest->validate()) {
+            $fillable = [
+                'name' => $registerRequest->firstname . " " .  $registerRequest->lastname,
                 'email'     => $registerRequest->email,
-                'password'  => password_hash($registerRequest->password, PASSWORD_DEFAULT)
-            ]);
+                'password'  => password_hash($registerRequest->password, PASSWORD_DEFAULT),
+            ];
+            $user = User::create($fillable);
 
-            if (is_array($user))
-            {
-                session()->set('user', $user);
+            if ($user) {
+                unset($fillable['password']);
+                session()->set('user', $fillable);
                 session()->setFlash('success', 'Welcome to our site');
                 $this->redirect('/');
-            }
-            else
-            {
+            } else {
                 // TODO Handle Error
             }
-
         }
 
         return $this->render('register', [
