@@ -2,38 +2,28 @@
 
 namespace App\models;
 
-use Core\Application;
-use Core\BaseModel;
+use Core\Database\ORM\Model;
 
-class User extends BaseModel
+class User extends Model
 {
-    private static string $tableName = 'users';
-    public static function tableName(): string
-    {
-        return self::$tableName ?? 'users';
-    }
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $table = 'users';
 
-    public static function login(array $data): bool
-    {
-        $user = self::find($data['email'], 'email');
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = ['name', 'email', 'password'];
 
-        if (is_array($user) AND password_verify($data['password'], $user['password']))
-        {
-            session()->set('user', $user);
-            return true;
-        }
-
-        return false;
-    }
-
-    public static function logOut(): void
-    {
-        Application::$app->user = [];
-        session()->remove('user');
-    }
-
-    public static function attribute(): array
-    {
-        return ['firstname', 'lastname', 'email', 'password'];
-    }
+    /**
+     * The attributes that should be cast to native types.
+     *
+     * @var array
+     */
+    protected $casts = [];
 }
