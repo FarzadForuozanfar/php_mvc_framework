@@ -2,6 +2,8 @@
 
 namespace Core;
 
+use App\models\User;
+
 class Request implements RequestRulesInterface
 {
     public array $errors = [];
@@ -102,7 +104,9 @@ class Request implements RequestRulesInterface
                 {
                     $className = $rule['class'];
                     $tableName = $className::tableName();
-                    $record    = Connection::db_select($tableName, "$attr='$value'");
+              
+                    $record    = User::where("Email", "test@gmail.com")->first();
+                    // $record    = Connection::db_select($tableName, "$attr='$value'");
                     if (is_array($record))
                     {
                         $this->addErrorForRule($attr, self::RULE_UNIQUE, ['field' => $attr]);
