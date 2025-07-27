@@ -11,12 +11,15 @@ abstract class BaseModel
     {
         $tableName  = static::tableName();
         $attributes = static::attribute();
-
         return Connection::db_insert($attributes, $data, $tableName);
     }
 
-    public static function find($value, string $field = "ID"): bool|array|null
+    public static function find($value, string $field = "ID"): array|null
     {
-        return Connection::db_select(static::tableName(), "$field='$value'");
+        // Use parameterized query for security
+        $table = static::tableName();
+        $sql = "SELECT * FROM `$table` WHERE `$field` = :value LIMIT 1";
+        $result = Connection::queryFirst($sql, [':value' => $value]);
+        return $result;
     }
 }

@@ -102,7 +102,9 @@ class Request implements RequestRulesInterface
                 {
                     $className = $rule['class'];
                     $tableName = $className::tableName();
-                    $record    = Connection::db_select($tableName, "$attr='$value'");
+                    // Use parameterized query for security
+                    $sql = "SELECT * FROM `$tableName` WHERE `$attr` = :value LIMIT 1";
+                    $record = \Core\Connection::queryFirst($sql, [':value' => $value]);
                     if (is_array($record))
                     {
                         $this->addErrorForRule($attr, self::RULE_UNIQUE, ['field' => $attr]);
