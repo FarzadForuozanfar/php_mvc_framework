@@ -3,162 +3,108 @@
 namespace Core;
 
 use Exception;
-use mysqli;
+use PDO;
+use PDOException;
 
 class Connection
 {
-    /* @var mysqli */
-    private static mysqli $connection;
+    private static ?Connection $instance = null;
+    private PDO $connection;
 
     private function __construct()
     {
-    }
-
-    /**
-     * @return false|mysqli|null
-     */
-    public static function create(): bool|mysqli|null
-    {
-        if (self::isConnected())
-            return self::$connection;
-        else
-            return self::connect();
-    }
-
-    /**
-     * @return false|mysqli
-     */
-    private static function connect(): bool|mysqli
-    {
         try {
-            $mysqli = mysqli_init();
-
-            mysqli_options($mysqli, MYSQLI_OPT_CONNECT_TIMEOUT, 5);
-            mysqli_options($mysqli, MYSQLI_OPT_READ_TIMEOUT, 5);
-            mysqli_options($mysqli, MYSQLI_OPT_INT_AND_FLOAT_NATIVE, true);
-
-            $mysqli->real_connect( config('DB_HOST'), config('DB_USER'), config('DB_PASS'), config('DB_NAME'));
-
-            if ($mysqli->connect_errno) {
-                $error = 'Failed to connect to MySQL: ' . $mysqli->connect_error . ', ' . mysqli_error($mysqli);
-                Log::add($error, Log::ERROR_TYPE);
-            }
-            else
-            {
-                self::$connection =  $mysqli;
-            }
-
-            return self::$connection;
-        }
-        catch (Exception $exception)
-        {
-            $errorMessage = "Error: {$exception->getMessage()}, Line: {$exception->getLine()}, File: {$exception->getFile()}, DB Params:" .
-                            print_r([
-                                config('DB_HOST'), config('DB_USER'), config('DB_PASS'), config('DB_NAME')
-                            ], true);
-            Log::add($errorMessage, Log::ERROR_TYPE);
-            return false;
+            $dsn = 'mysql:host=' . config('DB_HOST') . ';dbname=' . config('DB_NAME') . ';charset=utf8';
+            $this->connection = new PDO($dsn, config('DB_USER'), config('DB_PASS'));
+            $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        } catch (PDOException $e) {
+            Log::add('PDO Connection failed: ' . $e->getMessage(), Log::ERROR_TYPE);
+            throw new Exception('Database connection error');
         }
     }
 
-    /**
-     * @return bool
-     */
-    public static function isConnected(): bool
+    public static function getInstance(): Connection
     {
-        if (!empty(self::$connection) AND self::$connection->ping())
-        {
-            return true;
+        if (self::$instance === null) {
+            self::$instance = new Connection();
         }
-        return false;
+        return self::$instance;
     }
 
-    /**
-     * @return void
-     */
-    public static function reConnect(): void
+    public static function create(): ?PDO
     {
-        $conn = [];
-        try {
-            if (self::isConnected())
-            {
-                self::$connection->close();
-            }
-            $conn = self::connect();
-        }
-        catch (Exception $exception)
-        {
-            $errorMessage = "Error: {$exception->getMessage()}, Line: {$exception->getLine()}";
-            Log::add($errorMessage, Log::ERROR_TYPE);
-        }
+        return self::getInstance()->getConnection();
     }
 
-    public static function query(string $sql): array
+    public function getConnection(): PDO
+    {
+        return $this->connection;
+    }
+
+    public static function query(string $sql, array $params = []): array
     {
         $result = [];
-        $conn   = self::create();
-
+        $conn = self::create();
         try {
-            $stmt = $conn->query($sql);
-            while (@$row = mysqli_fetch_array($stmt, MYSQLI_ASSOC))
-            {
-                $result[] = $row;
-            }
-        }
-        catch (Exception $exception)
-        {
-            $errorMessage = "Error: {$exception->getMessage()}, Line: {$exception->getLine()}";
-            Log::add($errorMessage, Log::ERROR_TYPE);
+            $stmt = $conn->prepare($sql);
+            $stmt->execute($params);
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            Log::add('Query Error: ' . $e->getMessage(), Log::ERROR_TYPE);
         }
         return $result;
     }
 
-    public static function queryFirst(string $sql): bool|array|null
+    public static function queryFirst(string $sql, array $params = []): ?array
     {
         $conn = self::create();
-        return $conn->query($sql)->fetch_assoc();
-    }
-
-    public static function db_insert($attributes, $data, $table): array|null
-    {
-        $conn = self::create();
-        $sql  = "INSERT INTO $table SET ";
-        foreach($attributes as $attribute)
-        {
-            $sql .= "`{$attribute}` = '{$data[$attribute]}', ";
-        }
-
-        $sql = rtrim($sql, ", ");
-
         try {
-            $result = $conn->query($sql);
-            if ($result)
-            {
-                if ($conn->insert_id != 0)
-                    return self::db_select($table, "ID={$conn->insert_id}");
-
-                return self::db_select($table);
-
-            }
-
-            Log::add("Error Query: `$sql`", Log::ERROR_TYPE);
+            $stmt = $conn->prepare($sql);
+            $stmt->execute($params);
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $row !== false ? $row : null;
+        } catch (PDOException $e) {
+            Log::add('QueryFirst Error: ' . $e->getMessage(), Log::ERROR_TYPE);
+            return null;
         }
-        catch (Exception $exception)
-        {
-            Log::add($exception->getMessage(), Log::ERROR_TYPE);
-        }
-
-        return null;
     }
 
-    public static function db_select(string $table, string $condition = null, $field = '*', $fetchAll = false, $orderBy = 'ID', $orderType = 'DESC'): bool|array|null
+    public static function db_insert($attributes, $data, $table): ?array
+    {
+        $conn = self::create();
+        $fields = [];
+        $placeholders = [];
+        $values = [];
+        foreach ($attributes as $attribute) {
+            $fields[] = "`$attribute`";
+            $placeholders[] = ":$attribute";
+            $values[":$attribute"] = $data[$attribute];
+        }
+        $fieldsStr = implode(", ", $fields);
+        $placeholdersStr = implode(", ", $placeholders);
+        $sql = "INSERT INTO $table ($fieldsStr) VALUES ($placeholdersStr)";
+        try {
+            $stmt = $conn->prepare($sql);
+            $stmt->execute($values);
+            $lastId = $conn->lastInsertId();
+            if ($lastId) {
+                return self::db_select($table, "ID=$lastId");
+            }
+            return self::db_select($table);
+        } catch (PDOException $e) {
+            Log::add('Insert Error: ' . $e->getMessage(), Log::ERROR_TYPE);
+            return null;
+        }
+    }
+
+    public static function db_select(string $table, ?string $condition = null, $field = '*', $fetchAll = false, $orderBy = 'ID', $orderType = 'DESC'): array|null
     {
         $field = is_array($field) ? implode(', ', $field) : $field;
         $where = $condition ? " WHERE $condition" : '';
-        $sql   = "SELECT {$field} FROM `$table` $where";
-        $sql  .= " ORDER BY $orderBy $orderType";
-        $sql  .= $fetchAll ? ';' : ' LIMIT 1;';
-
+        $sql = "SELECT {$field} FROM `$table` $where ORDER BY $orderBy $orderType";
+        if (!$fetchAll) {
+            $sql .= ' LIMIT 1';
+        }
         return $fetchAll ? self::query($sql) : self::queryFirst($sql);
     }
 }

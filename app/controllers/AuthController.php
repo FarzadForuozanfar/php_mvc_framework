@@ -70,9 +70,20 @@ class AuthController extends BaseController
             }
             else
             {
-                // TODO Handle Error
+                session()->setFlash('error', 'Registration failed. Please try again later.');
             }
-
+        } else {
+            // Show the first validation error as a flash message
+            $firstError = '';
+            foreach ($registerRequest->errors as $fieldErrors) {
+                if (!empty($fieldErrors)) {
+                    $firstError = $fieldErrors[0];
+                    break;
+                }
+            }
+            if ($firstError) {
+                session()->setFlash('error', $firstError);
+            }
         }
 
         return $this->render('register', [
