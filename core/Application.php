@@ -19,12 +19,24 @@ class Application
         $this->response = new Response();
         $this->session = new Session();
         $this->router = new Router($this->request, $this->response);
+        $this->setSecurityHeaders();
 
         $userInfo = $this->session->get('user');
         if ($userInfo)
         {
             $this->user = $userInfo;
         }
+    }
+    private function setSecurityHeaders(): void
+    {
+        header('X-XSS-Protection: 1; mode=block');
+        
+        header('X-Content-Type-Options: nosniff');
+        
+        header('X-Frame-Options: DENY');
+        
+        header('Referrer-Policy: strict-origin-when-cross-origin');
+        header("Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; img-src 'self' data: https:; font-src 'self' https://cdn.jsdelivr.net;");
     }
 
     public static function AuthCheck(): bool

@@ -1,17 +1,39 @@
 <?php 
 
+namespace Core;
 
-namespace App\RateLimiter;
-
-use App\interfaces\RateLimiterStrategyInterface;
+use App\Strategies\SessionStrategy;
+use Exception;
 
 class RateLimiter
 {
-    protected RateLimiterStrategyInterface $strategy;
+    private static ?self $instance = null;
+    private $strategy;
 
-    public function __construct(RateLimiterStrategyInterface $strategy)
+    private function __construct()
     {
-        $this->strategy = $strategy;
+        $config = require __DIR__ . '/../config/ratelimiter.php';
+
+        $driver = $config['driver'] ?? 'session';
+
+        switch ($driver) {
+            case 'session':
+                $this->strategy = new SessionStrategy();
+                break;
+            // case 'redis':
+            //     $this->strategy = new RedisStrategy();
+            //     break;
+            default:
+                throw new Exception("Unknown rate limiter driver: $driver");
+        }
+    }
+
+    public static function getInstance(): self
+    {
+        if (self::$instance === null) {
+            self::$instance = new self();
+        }
+        return self::$instance;
     }
 
     public function attempt(string $key, int $maxAttempts, int $decayMinutes): bool
@@ -19,10 +41,6 @@ class RateLimiter
         return $this->strategy->attempt($key, $maxAttempts, $decayMinutes);
     }
 }
-
-
-
-
 
 
 ?>
