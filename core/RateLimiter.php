@@ -18,13 +18,16 @@ class RateLimiter
 
         switch ($driver) {
             case 'session':
-                $this->strategy = new SessionStrategy();
+                $this->strategy = new \App\Strategies\SessionStrategy();
                 break;
-            // case 'redis':
-            //     $this->strategy = new RedisStrategy();
-            //     break;
+            case 'redis':
+                $this->strategy = new \App\Strategies\RedisStrategy();
+                break;
+            case 'apcu':
+                $this->strategy = new \App\Strategies\APCuStrategy();
+                break;
             default:
-                throw new Exception("Unknown rate limiter driver: $driver");
+                throw new \Exception("Unknown rate limiter driver: $driver");
         }
     }
 
