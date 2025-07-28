@@ -4,18 +4,18 @@
 <form method="post" action="">
     <div class="form-group mb-3">
         <label for="email">Email address</label>
-        <input id="email" type="email" name="email" value="<?= htmlspecialchars($request->old('email'), ENT_QUOTES, 'UTF-8', false); ?>"
+        <input id="email" type="email" name="email" value="<?= e($request->old('email')); ?>"
                class="form-control <?= $request->hasError('email') ? 'is-invalid' : '' ?>">
         <div class="invalid-feedback">
-            <?= htmlspecialchars($request->getFirstError('email'), ENT_QUOTES, 'UTF-8', false); ?>
+            <?= e($request->getFirstError('email')); ?>
         </div>
     </div>
     <div class="form-group mb-3">
         <label for="password">Password</label>
-        <input id="password" type="password" name="password" value="<?= htmlspecialchars($request->old('password'), ENT_QUOTES, 'UTF-8', false); ?>"
+        <input id="password" type="password" name="password" value="<?= e($request->old('password')); ?>"
                class="form-control <?= $request->hasError('password') ? 'is-invalid' : '' ?>">
         <div class="invalid-feedback">
-            <?= htmlspecialchars($request->getFirstError('password'), ENT_QUOTES, 'UTF-8', false); ?>
+            <?= e($request->getFirstError('password')); ?>
         </div>
     </div>
     <button type="submit" class="btn btn-primary">Submit</button>

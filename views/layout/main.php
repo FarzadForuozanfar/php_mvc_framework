@@ -52,7 +52,7 @@ use Core\Application;
 <div class="container">
     <?php if (session()->getFlash('success')):?>
         <div class="alert alert-success">
-            <?= htmlspecialchars(session()->getFlash('success'), ENT_QUOTES, 'UTF-8', false); ?>
+            <?= e(session()->getFlash('success')); ?>
         </div>
     <?php endif;?>
     <?php if (session()->getFlash('error')):?>
