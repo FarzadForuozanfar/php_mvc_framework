@@ -1,9 +1,11 @@
 <?php
 use Core\Application;
+
 ?>
 <!doctype html>
 <html lang="en">
 <head>
+    
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>PHP MVC</title>
@@ -50,7 +52,7 @@ use Core\Application;
 <div class="container">
     <?php if (session()->getFlash('success')):?>
         <div class="alert alert-success">
-            <?= session()->getFlash('success'); ?>
+            <?= e(session()->getFlash('success')); ?>
         </div>
     <?php endif;?>
     <?php if (session()->getFlash('error')):?>

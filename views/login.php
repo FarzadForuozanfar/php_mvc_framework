@@ -4,18 +4,18 @@
 <form method="post" action="">
     <div class="form-group mb-3">
         <label for="email">Email address</label>
-        <input id="email" type="email" name="email" value="<?= $request->old('email'); ?>"
+        <input id="email" type="email" name="email" value="<?= e($request->old('email')); ?>"
                class="form-control <?= $request->hasError('email') ? 'is-invalid' : '' ?>">
         <div class="invalid-feedback">
-            <?= $request->getFirstError('email'); ?>
+            <?= e($request->getFirstError('email')); ?>
         </div>
     </div>
     <div class="form-group mb-3">
         <label for="password">Password</label>
-        <input id="password" type="password" name="password" value="<?= $request->old('password'); ?>"
+        <input id="password" type="password" name="password" value="<?= e($request->old('password')); ?>"
                class="form-control <?= $request->hasError('password') ? 'is-invalid' : '' ?>">
         <div class="invalid-feedback">
-            <?= $request->getFirstError('password'); ?>
+            <?= e($request->getFirstError('password')); ?>
         </div>
     </div>
     <button type="submit" class="btn btn-primary">Submit</button>
