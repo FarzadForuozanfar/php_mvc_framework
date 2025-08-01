@@ -23,7 +23,7 @@ Log::add($attempts , Log::INFO_TYPE);
 
     if (time() >= $expiresAt) {
         $attempts = 0;
-        $expiresAt = time() + ($decayMinutes * 60); // این خط را اضافه کن
+        $expiresAt = time() + ($decayMinutes * 60); 
     }
 
     $_SESSION[$key] = $attempts + 1;

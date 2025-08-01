@@ -69,32 +69,11 @@ if (!function_exists('config'))
 
 if (!function_exists('rate_limit'))
 {
-    /**
-     * اعمال ریت لیمیتر برای درخواست‌ها
-     * @param string $key کلید منحصر به فرد
-     * @param int $maxAttempts حداکثر تعداد تلاش
-     * @param int $decayMinutes زمان انقضا (دقیقه)
-     * @return bool
-     */
+
     function rate_limit(string $key, int $maxAttempts = 5, int $decayMinutes = 1): bool
     {
         $rateLimiter = \Core\RateLimiter::getInstance();
         return $rateLimiter->attempt($key, $maxAttempts, $decayMinutes);
-    }
-}
-
-if (!function_exists('rate_limit_middleware'))
-{
-    /**
-     * ایجاد middleware ریت لیمیتر
-     * @param string $keyPrefix پیشوند کلید
-     * @param int $maxAttempts حداکثر تعداد تلاش
-     * @param int $decayMinutes زمان انقضا (دقیقه)
-     * @return \Core\RateLimiterMiddleware
-     */
-    function rate_limit_middleware(string $keyPrefix = '', int $maxAttempts = 5, int $decayMinutes = 1): \Core\RateLimiterMiddleware
-    {
-        return new \Core\RateLimiterMiddleware($keyPrefix, $maxAttempts, $decayMinutes);
     }
 }
 

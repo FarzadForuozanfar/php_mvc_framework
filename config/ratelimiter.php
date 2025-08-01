@@ -1,6 +1,6 @@
 <?php
-return [
-    'driver' => 'apcu',
-    'max_attempts' => 5,
-    'decay_minutes' => 1,
-];
+
+
+define("DRIVER", "apcu");
+define("MAX_ATTEMPTS", 5);
+define("DECAY_MINUTES", 1);

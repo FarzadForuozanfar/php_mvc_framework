@@ -2,6 +2,8 @@
 
 namespace Core;
 
+use App\Strategies\APCuStrategy;
+use App\Strategies\RedisStrategy;
 use App\Strategies\SessionStrategy;
 use Exception;
 
@@ -12,19 +14,20 @@ class RateLimiter
 
     private function __construct()
     {
-        $config = require __DIR__ . '/../config/ratelimiter.php';
 
-        $driver = $config['driver'] ?? 'session';
+        $driver = config('DRIVER') ?? 'session';
+        $maxAttempts = config('MAX_ATTEMPTS') ?? 5;
+        $decayMinutes = config('DECAY_MINUTES') ?? 1;
 
         switch ($driver) {
             case 'session':
-                $this->strategy = new \App\Strategies\SessionStrategy();
+                $this->strategy = new SessionStrategy();
                 break;
             case 'redis':
-                $this->strategy = new \App\Strategies\RedisStrategy();
+                $this->strategy = new RedisStrategy();
                 break;
             case 'apcu':
-                $this->strategy = new \App\Strategies\APCuStrategy();
+                $this->strategy = new APCuStrategy();
                 break;
             default:
                 throw new \Exception("Unknown rate limiter driver: $driver");
@@ -39,11 +42,13 @@ class RateLimiter
         return self::$instance;
     }
 
-    public function attempt(string $key, int $maxAttempts, int $decayMinutes): bool
+    public function attempt(string $key, ?int $maxAttempts  = null, ?int $decayMinutes = null): bool
     {
+
+        $maxAttempts = $maxAttempts ?? config('MAX_ATTEMPTS');
+        $decayMinutes = $decayMinutes ?? config('DECAY_MINUTES');
+
         return $this->strategy->attempt($key, $maxAttempts, $decayMinutes);
     }
 }
 
-
-?>

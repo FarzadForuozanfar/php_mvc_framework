@@ -12,7 +12,7 @@ class RedisStrategy implements RateLimiterStrategyInterface
     public function __construct()
     {
         $this->redis = new \Redis();
-        $this->redis->connect('127.0.0.1', 6379); // اگر نیاز به تغییر داری، کانفیگ کن
+        $this->redis->connect('127.0.0.1', 6379);
     }
 
     public function attempt(string $key, int $maxAttempts, int $decayMinutes): bool

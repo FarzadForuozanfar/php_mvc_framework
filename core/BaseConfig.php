@@ -4,6 +4,7 @@ namespace Core;
 
 require_once '../config/database.php';
 require_once '../config/app.php';
+require_once '../config/ratelimiter.php';
 class BaseConfig
 {
     private static array $configs;
@@ -18,7 +19,10 @@ class BaseConfig
             'APP_PORT'=> APP_PORT,
             'APP_URL' => APP_URL,
             'BASE_DIR'=> BASE_DIR,
-            'TIMEZONE'=> TIMEZONE
+            'TIMEZONE'=> TIMEZONE,
+            'DRIVER'=> DRIVER,
+            'MAX_ATTEMPTS'=> MAX_ATTEMPTS,
+            'DECAY_MINUTES'=> DECAY_MINUTES,
         ];
     }
 
