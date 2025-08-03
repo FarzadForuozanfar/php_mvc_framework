@@ -5,8 +5,19 @@ namespace Core;
 class Session
 {
     protected const FLASH_KEY = 'flash_messages';
+
     public function __construct()
     {
+        ini_set('session.use_only_cookies', 1);
+        ini_set('session.cookie_httponly', 1);
+        session_set_cookie_params([
+            'lifetime' => 0,
+            'path' => '/',
+            'domain' => '',
+            'secure' => true,
+            'httponly' => true,
+            'samesite' => 'Strict',
+        ]);
         if (session_status() != PHP_SESSION_ACTIVE)
         {
             session_start();

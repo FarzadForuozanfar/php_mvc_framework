@@ -38,6 +38,7 @@ class AuthController extends BaseController
         {
             if (User::login(['email' => $loginRequest->email, 'password' => $loginRequest->password]))
             {
+                session_regenerate_id(true);
                 $this->redirect('/');
                 return true;
             }
@@ -73,6 +74,7 @@ class AuthController extends BaseController
 
             if (is_array($user))
             {
+            session_regenerate_id(true);
                 session()->set('user', $user);
                 session()->setFlash('success', 'Welcome to our site');
                 $this->redirect('/');

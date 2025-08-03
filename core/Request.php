@@ -25,31 +25,39 @@ class Request implements RequestRulesInterface
     }
 
     public function getBody(): array
-    {
-        $body = [];
+{
+    $body = [];
 
-        if ($this->isGet())
-        {
-            foreach ($_GET as $key => $value)
-            {
-                $body[$key] = filter_input(INPUT_GET, $key, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-            }
+    if ($this->isGet()) {
+        foreach ($_GET as $key => $value) {
+            $body[$key] = filter_input(INPUT_GET, $key, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         }
+    } elseif ($this->isPost()) {
+        $contentType = $_SERVER['CONTENT_TYPE'] ?? '';
 
-        elseif ($this->isPost())
-        {
-            foreach ($_POST as $key => $value)
-            {
+        if (stripos($contentType, 'application/json') !== false) {
+            $rawBody = file_get_contents('php://input');
+            $data = json_decode($rawBody, true);
+
+            if (json_last_error() === JSON_ERROR_NONE && is_array($data)) {
+                foreach ($data as $key => $value) {
+                    if (is_string($value)) {
+                        $body[$key] = filter_var($value, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+                    } else {
+                        $body[$key] = $value;
+                    }
+                }
+            }
+        } else {
+            foreach ($_POST as $key => $value) {
                 $body[$key] = filter_input(INPUT_POST, $key, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
             }
         }
-
-        foreach ($_REQUEST as $KEY => $value)
-        {
-            $body[$KEY] = filter_var($value, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-        }
-        return $body;
     }
+
+    return $body;
+}
+
 
     public function isGet(): bool
     {
