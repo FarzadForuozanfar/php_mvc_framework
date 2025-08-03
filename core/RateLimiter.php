@@ -15,9 +15,9 @@ class RateLimiter
     private function __construct()
     {
 
-        $driver = config('DRIVER') ?? 'session';
-        $maxAttempts = config('MAX_ATTEMPTS') ?? 5;
-        $decayMinutes = config('DECAY_MINUTES') ?? 1;
+        $driver = config('RATE_LIMITER_DRIVER') ?? 'session';
+        $maxAttempts = config('RATE_LIMITER_MAX_ATTEMPTS') ?? 5;
+        $decayMinutes = config('RATE_LIMITER_DECAY_MINUTES') ?? 1;
 
         switch ($driver) {
             case 'session':

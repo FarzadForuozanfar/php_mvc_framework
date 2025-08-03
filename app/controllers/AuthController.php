@@ -26,12 +26,10 @@ class AuthController extends BaseController
 
     public function handleLogin(Request $request): bool|array|string
     {
-        $rateLimiter = RateLimiter::getInstance();
-
-if (!$rateLimiter->attempt('login:' . $_SERVER['REMOTE_ADDR'], 2, 1)) {
-    echo "زیادی تلاش کردی، یه دقیقه صبر کن.";
-    exit;
-}
+        if (!rate_limit('login:' . $_SERVER['REMOTE_ADDR'], 2, 1)) {
+            echo "زیادی تلاش کردی، یه دقیقه صبر کن.";
+            exit;
+        }
         $this->setLayout('auth');
         $loginRequest = new LoginRequest();
         $loginRequest->loadData($request->getBody());
@@ -56,8 +54,7 @@ if (!$rateLimiter->attempt('login:' . $_SERVER['REMOTE_ADDR'], 2, 1)) {
 
     public function handleRegister(Request $request): bool|array|string
     {
-        $rateLimiter = RateLimiter::getInstance();
-        if (!$rateLimiter->attempt('register:' . $_SERVER['REMOTE_ADDR'], 2, 1)) {
+        if (!rate_limit('register:' . $_SERVER['REMOTE_ADDR'], 2, 1)) {
             echo "زیادی تلاش کردی، یه دقیقه صبر کن.";
             exit;
         }
