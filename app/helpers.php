@@ -75,3 +75,13 @@ if (!function_exists('config'))
     }
 }
 
+if (!function_exists('rate_limit'))
+{
+
+    function rate_limit(string $key, int $maxAttempts = 5, int $decayMinutes = 1): bool
+    {
+        $rateLimiter = \Core\RateLimiter::getInstance();
+        return $rateLimiter->attempt($key, $maxAttempts, $decayMinutes);
+    }
+}
+

@@ -8,6 +8,7 @@ use Core\Request;
 use App\models\User;
 use App\requests\LoginRequest;
 use App\requests\RegisterRequest;
+use Core\RateLimiter;
 
 class AuthController extends BaseController
 {
@@ -25,6 +26,10 @@ class AuthController extends BaseController
 
     public function handleLogin(Request $request): bool|array|string
     {
+        if (!rate_limit('login:' . $_SERVER['REMOTE_ADDR'], 2, 1)) {
+            echo "زیادی تلاش کردی، یه دقیقه صبر کن.";
+            exit;
+        }
         $this->setLayout('auth');
         $loginRequest = new LoginRequest();
         $loginRequest->loadData($request->getBody());
@@ -50,6 +55,10 @@ class AuthController extends BaseController
 
     public function handleRegister(Request $request): bool|array|string
     {
+        if (!rate_limit('register:' . $_SERVER['REMOTE_ADDR'], 2, 1)) {
+            echo "زیادی تلاش کردی، یه دقیقه صبر کن.";
+            exit;
+        }
         $this->setLayout('auth');
         $registerRequest = new RegisterRequest();
         $registerRequest->loadData($request->getBody());
@@ -75,7 +84,6 @@ class AuthController extends BaseController
                 session()->setFlash('error', 'Registration failed. Please try again later.');
             }
         } else {
-            // Show the first validation error as a flash message
             $firstError = '';
             foreach ($registerRequest->errors as $fieldErrors) {
                 if (!empty($fieldErrors)) {
