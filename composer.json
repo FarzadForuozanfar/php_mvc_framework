@@ -1,21 +1,21 @@
 {
-    "name": "vendor/php_mvc",
-    "autoload": {
-        "psr-4": {
-            "App\\": "./app",
-            "Core\\": "./core"
-        },
-        "files": [
-            "app/helpers.php"
-        ]
+  "name": "vendor/php_mvc",
+  "autoload": {
+    "psr-4": {
+      "App\\": "./app",
+      "Core\\": "./core"
     },
-    "authors": [
-        {
-            "name": "Farzad Foroozanfar",
-            "email": "foruozanfar2000f@gmail.com"
-        }
-    ],
-    "require": {
-      "ext-mysqli": "*"
+    "files": [
+      "app/helpers.php"
+    ]
+  },
+  "authors": [
+    {
+      "name": "Farzad Foroozanfar",
+      "email": "foruozanfar2000f@gmail.com"
     }
+  ],
+  "require": {
+    "ext-mysqli": "*"
+  }
 }

@@ -1,0 +1,28 @@
+version: "3.8"
+services:
+  app:
+    build: .
+    ports:
+      - "3000:80"
+    volumes:
+      - .:/var/www/html
+    depends_on:
+      - db
+    environment:
+      - DB_HOST=db
+      - DB_DATABASE=app_db
+      - DB_USERNAME=root
+      - DB_PASSWORD=secret
+  db:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_DATABASE: app_db
+    ports:
+      - "3310:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./schema.sql:/docker-entrypoint-initdb.d/schema.sql
+volumes:
+  db_data:
