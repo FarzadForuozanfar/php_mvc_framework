@@ -10,15 +10,15 @@ services:
       - db
     environment:
       - DB_HOST=db
-      - DB_DATABASE=app_db
+      - DB_DATABASE=mvc
       - DB_USERNAME=root
-      - DB_PASSWORD=secret
+      - DB_PASSWORD=
   db:
     image: mysql:8.0
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: secret
-      MYSQL_DATABASE: app_db
+      MYSQL_ROOT_PASSWORD: 
+      MYSQL_DATABASE: mvc
     ports:
       - "3310:3306"
     volumes:
