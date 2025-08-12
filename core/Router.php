@@ -8,14 +8,17 @@ class Router
     public Request $request;
     public Response $response;
 
-    /**
-     * @param Request $request
-     * @param Response $response
-     */
     public function __construct(Request $request, Response $response)
     {
         $this->response = $response;
         $this->request = $request;
+
+        $baseDir = function_exists('config') ? (config('BASE_DIR') ?: dirname(__DIR__, 1)) : dirname(__DIR__, 1);
+        $apiRoutes = rtrim($baseDir, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'routes' . DIRECTORY_SEPARATOR . 'api.php';
+        if (file_exists($apiRoutes)) {
+            $router = $this; 
+            require_once $apiRoutes;
+        }
     }
 
 
@@ -38,6 +41,11 @@ class Router
         if (!$callback)
         {
             $this->response->setStatusCode(404);
+            $path = $this->request->getPath();
+            if (strpos($path, '/api/') === 0) {
+                header('Content-Type: application/json; charset=utf-8');
+                return json_encode(['error' => 'Not Found'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+            }
             return "404";
         }
 

@@ -15,12 +15,9 @@ $app->router->get('/', function () {
 });
 
 $app->router->get('users', 'users');
-
-/* Contact Routes */
 $app->router->get('/contact', [SiteController::class, 'getContactForm']);
 $app->router->post('/contact', [SiteController::class, 'handleContact']);
 
-/* Auth Routes*/
 $app->router->get('/register', [AuthController::class, 'showRegisterForm']);
 $app->router->get('/login', [AuthController::class, 'showLoginForm']);
 $app->router->post('/register', [AuthController::class, 'handleRegister']);
