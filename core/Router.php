@@ -12,13 +12,6 @@ class Router
     {
         $this->response = $response;
         $this->request = $request;
-
-        $baseDir = function_exists('config') ? (config('BASE_DIR') ?: dirname(__DIR__, 1)) : dirname(__DIR__, 1);
-        $apiRoutes = rtrim($baseDir, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'routes' . DIRECTORY_SEPARATOR . 'api.php';
-        if (file_exists($apiRoutes)) {
-            $router = $this; 
-            require_once $apiRoutes;
-        }
     }
 
 
