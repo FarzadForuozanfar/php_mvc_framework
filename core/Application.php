@@ -19,6 +19,13 @@ class Application
         $this->response = new Response();
         $this->session = new Session();
         $this->router = new Router($this->request, $this->response);
+
+        $webRoutes = require rtrim(config('BASE_DIR'), DIRECTORY_SEPARATOR) . '/routes/web.php';
+        $apiRoutes = require rtrim(config('BASE_DIR'), DIRECTORY_SEPARATOR) . '/routes/api.php';
+        
+        $webRoutes($this->router);
+        $apiRoutes($this->router);
+
         $this->setSecurityHeaders();
 
         $userInfo = $this->session->get('user');

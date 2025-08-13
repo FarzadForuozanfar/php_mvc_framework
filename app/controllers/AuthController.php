@@ -55,7 +55,7 @@ class AuthController extends BaseController
 
     public function handleRegister(Request $request): bool|array|string
     {
-        if (!rate_limit('register:' . $_SERVER['REMOTE_ADDR'], 2, 1)) {
+        if (!rate_limit('register:' . $_SERVER['REMOTE_ADDR'], 90, 1)) {
             echo "زیادی تلاش کردی، یه دقیقه صبر کن.";
             exit;
         }
