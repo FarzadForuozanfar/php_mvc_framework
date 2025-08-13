@@ -8,10 +8,6 @@ class Router
     public Request $request;
     public Response $response;
 
-    /**
-     * @param Request $request
-     * @param Response $response
-     */
     public function __construct(Request $request, Response $response)
     {
         $this->response = $response;
@@ -38,6 +34,11 @@ class Router
         if (!$callback)
         {
             $this->response->setStatusCode(404);
+            $path = $this->request->getPath();
+            if (strpos($path, '/api/') === 0) {
+                header('Content-Type: application/json; charset=utf-8');
+                return json_encode(['error' => 'Not Found'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+            }
             return "404";
         }
 
