@@ -1,5 +1,5 @@
 <?php
 
 
-define("REDIS_HOST", "127.0.0.1");
-define("REDIS_PORT", 6379);
+define("REDIS_HOST", env('REDIS_HOST', 'localhost'));
+define("REDIS_PORT", env('REDIS_PORT', 6379));

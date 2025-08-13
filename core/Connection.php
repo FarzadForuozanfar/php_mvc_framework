@@ -13,12 +13,18 @@ class Connection
 
     private function __construct()
     {
+        $config = [
+            'host' => config('DB_HOST'),
+            'user' => config('DB_USER'),
+            'password' => config('DB_PASS'),
+            'database' => config('DB_NAME')
+        ];
         try {
-            $dsn = 'mysql:host=' . config('DB_HOST') . ';dbname=' . config('DB_NAME') . ';charset=utf8';
-            $this->connection = new PDO($dsn, config('DB_USER'), config('DB_PASS'));
+            $dsn = 'mysql:host=' . $config['host'] . ';dbname=' . $config['database'] . ';charset=utf8';
+            $this->connection = new PDO($dsn, $config['user'], $config['password']);
             $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         } catch (PDOException $e) {
-            Log::add('PDO Connection failed: ' . $e->getMessage(), Log::ERROR_TYPE);
+            Log::add('PDO Connection failed: ' . $e->getMessage() . ' configs:' . json_encode($config), Log::ERROR_TYPE);
             throw new Exception('Database connection error');
         }
     }
