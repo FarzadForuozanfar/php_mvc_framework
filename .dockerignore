@@ -1,0 +1,9 @@
+.git
+.idea
+.vscode
+vendor/
+node_modules/
+docker/*
+!docker/php/**
+!docker/php-fpm/**
+Dockerfile
