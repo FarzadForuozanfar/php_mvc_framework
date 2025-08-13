@@ -69,6 +69,7 @@ class Request implements RequestRulesInterface
         return $this->Method() === 'post';
     }
 
+
     public function loadData($data): void
     {
         foreach ($data as $key => $value)

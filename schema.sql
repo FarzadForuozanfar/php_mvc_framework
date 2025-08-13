@@ -82,3 +82,15 @@ COMMIT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+
+-- --------------------------------------------------------
+
+CREATE TABLE IF NOT EXISTS `reservations` (
+  `ID` int NOT NULL AUTO_INCREMENT,
+  `book_id` int NOT NULL,
+  `user_id` int NOT NULL,
+  `reservation_date` datetime NOT NULL,
+  `return_date` datetime NOT NULL,
+  `status` varchar(32) COLLATE utf8mb4_persian_ci NOT NULL DEFAULT 'active',
+  PRIMARY KEY (`ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_persian_ci;

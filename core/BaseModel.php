@@ -16,7 +16,6 @@ abstract class BaseModel
 
     public static function find($value, string $field = "ID"): array|null
     {
-        // Use parameterized query for security
         $table = static::tableName();
         $sql = "SELECT * FROM `$table` WHERE `$field` = :value LIMIT 1";
         $result = Connection::queryFirst($sql, [':value' => $value]);
