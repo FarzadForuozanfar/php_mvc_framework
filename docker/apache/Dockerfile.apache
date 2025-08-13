@@ -1,0 +1,31 @@
+FROM php:8.2-apache
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+      libzip-dev zlib1g-dev $PHPIZE_DEPS libzip5 unzip \
+  && docker-php-ext-install pdo pdo_mysql zip opcache \
+  && pecl install redis apcu \
+  && docker-php-ext-enable redis apcu opcache \
+  && a2enmod rewrite headers expires deflate
+
+COPY docker/php/ $PHP_INI_DIR/conf.d/
+
+WORKDIR /var/www/html
+
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# COPY . .
+# RUN composer install --no-interaction --no-plugins --no-scripts --ignore-platform-reqs --no-dev -o
+
+COPY composer.json composer.lock ./
+RUN composer install --no-interaction --no-plugins --no-scripts --ignore-platform-reqs --no-dev -o
+COPY . .
+
+RUN apt-get purge -y --auto-remove $PHPIZE_DEPS libzip-dev zlib1g-dev \
+  && rm -rf /var/lib/apt/lists/* /tmp/pear
+
+RUN chown -R www-data:www-data /var/www/html \
+ && mkdir -p /var/log/php && chown -R www-data:www-data /var/log/php
+
+EXPOSE 80
+
+CMD ["apache2-foreground"]

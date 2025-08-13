@@ -16,12 +16,11 @@
     }
   ],
   "require": {
-    "ext-mysqli": "*",
     "ext-redis": "*",
-    "ext-apcu": "*"
+    "ext-apcu": "*",
+    "vlucas/phpdotenv": "^5.6"
   },
-  "scripts": {
-    "test": "php tests/RateLimiterTest.php",
-    "example": "php examples/rate_limiter_example.php"
+  "scripts": { 
+    "migrate": "php migrate.php"
   }
 }

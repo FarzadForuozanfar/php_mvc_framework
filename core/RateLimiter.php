@@ -30,7 +30,7 @@ class RateLimiter
                 $this->strategy = new APCuStrategy();
                 break;
             default:
-                throw new \Exception("Unknown rate limiter driver: $driver");
+                throw new Exception("Unknown rate limiter driver: $driver");
         }
     }
 

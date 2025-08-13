@@ -69,9 +69,9 @@ if (!function_exists('view'))
 
 if (!function_exists('config'))
 {
-    function config(string $key): ?string
+    function config(string $key, $default = null): ?string
     {
-        return BaseConfig::get($key);
+        return BaseConfig::get($key) ?? $default;
     }
 }
 
@@ -85,3 +85,8 @@ if (!function_exists('rate_limit'))
     }
 }
 
+if (!function_exists('env')) {
+    function env($key, $default = null) {
+        return $_ENV[$key] ?? $_SERVER[$key] ?? getenv($key) ?: $default;
+    }
+}
