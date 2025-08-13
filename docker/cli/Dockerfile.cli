@@ -1,0 +1,29 @@
+FROM php:8.2-cli-alpine
+
+WORKDIR /var/www/html
+
+RUN apk add --no-cache --virtual .build-deps \
+    build-base \
+    autoconf \
+    libzip-dev \
+    && docker-php-ext-install pdo pdo_mysql zip \
+    && pecl install redis apcu \
+    && docker-php-ext-enable redis apcu \
+    && apk del .build-deps \
+    && rm -rf /tmp/pear
+
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+COPY . .
+
+RUN composer install --no-interaction --no-plugins --no-scripts --ignore-platform-reqs -o \
+    && chown -R www-data:www-data /var/www/html
+
+# RUN addgroup -g 1000 -S www-data \
+#     && adduser -u 1000 -S www-data -G www-data
+
+# USER www-data
+
+EXPOSE 8000
+
+CMD ["php", "-S", "0.0.0.0:8000", "-t", "public"]
