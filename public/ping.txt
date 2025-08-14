@@ -1,0 +1,375 @@
+Skip to main content
+Stack Overflow
+
+Products
+Search…
+Farzad Foroozanfar's user avatar
+Farzad Foroozanfar
+31, 31 reputation
+●55 bronze badges
+1
+Home
+New
+Questions
+AI Assist
+Labs
+Tags
+Saves
+Challenges
+Chat
+Articles
+Users
+Jobs
+Companies
+Collectives
+Communities for your favorite technologies. Explore all Collectives
+
+Teams
+
+Ask questions, find answers and collaborate at work with Stack Overflow for Teams.
+
+ 
+Looking for your Teams?
+
+
+
+How to use Persistent Connection of PDO? [duplicate]
+Asked 14 years, 9 months ago
+Modified 11 months ago
+Viewed 24k times
+ Part of PHP Collective
+
+Report this ad
+10
+
+This question already has answers here:
+Fully Understanding PDO ATTR_PERSISTENT (4 answers)
+Closed 8 years ago.
+I have the following code and freshed this webpage in Firefox for 5 times, then the MySQL showed me 5 connections. According to the PDO Manual,
+
+Persistent connections are not closed at the end of the script, but are cached and re-used when another script requests a connection using the same credentials. The persistent connection cache allows you to avoid the overhead of establishing a new connection every time a script needs to talk to a database, resulting in a faster web application.
+
+I have used the same credentials, but the number of MYSQL connection keep increasing. Even trying to close connection with $db = null could not close the connections. What's wrong of my code?
+
+<?php
+try {
+ $dbh = new PDO('mysql:host=127.0.0.1;dbname=lingtong', 'root', 'xxxxxx', array(PDO::ATTR_PERSISTENT => true));
+ foreach ($dbh->query('SELECT * from agent') as $row) 
+  print_r($row);
+ $dbh = null;
+} catch (PDOException $e) {
+ print "Error! : " . $e->getMessage() . "<br/>";
+ die();
+}
+phpmysqlpdo
+Share
+Edit
+Follow
+Flag
+edited Dec 22, 2016 at 16:16
+Sebas's user avatar
+Sebas
+21.6k99 gold badges6060 silver badges109109 bronze badges
+asked Nov 13, 2010 at 8:13
+Jichao's user avatar
+Jichao
+42k5050 gold badges132132 silver badges205205 bronze badges
+1
+
+What "did not work"? closing of the connection or removing the persistence? – 
+bcosca
+ CommentedNov 13, 2010 at 8:40 
+1
+
+php.net/manual/en/pdo.connections.php Look at the last note. Is that can be the situation for you? – 
+Halil Özgür
+ CommentedNov 13, 2010 at 9:32
+
+what is the method you had applied to get number of connection ? show processlist or ? – 
+ajreal
+ CommentedNov 15, 2010 at 15:43
+
+Where actually are these connections cached??? That works even if you have no caching mechanism in place? – 
+Felipe
+ CommentedMay 20, 2011 at 23:19
+
+it seems you need to close the cursor and assign null to the last statement object as well to close the connection – 
+Sebas
+ CommentedDec 22, 2016 at 16:27
+Add a comment
+3 Answers
+Sorted by:
+
+Highest score (default)
+Did this work?
+Help others by voting on useful content.
+
+3
+
+This question is very old but it will be okay if I contribute. I think you need to implement a singleton class for handling database connections I will write a sample class below ..
+
+<?php
+class DB {
+
+    //set the connection property to private to prevent direct access 
+    private static $conn;
+
+    //now since we dont want to reinstiate the class anytime we need it, lets also set the constructor to private 
+    private function __construct() {}
+
+    //now lets create our method for connecting to the database 
+    public static function connect() {
+
+        //now lets check if a connection exists already in our $conn property, then we should return it instead of recreating a new connection 
+        if(!empty(self::$conn)) {
+            return self::$conn;
+        }//end if 
+
+        //upon reaching here means the $conn property is empty so lets create a new connection 
+
+        try {
+            $dbh = new PDO('mysql:host=127.0.0.1;dbname=lingtong', 'root', 'xxxxxx', array(PDO::ATTR_PERSISTENT => true));
+
+            //lets now assign the database connection to our $conn property 
+            self::$conn = $dbh;
+
+            //return the connection 
+            return $dbh;
+
+        } catch (PDOException $e) {
+            print "Error! : " . $e->getMessage() . "<br/>";
+            die();
+        }
+    }//end method 
+
+}//end class
+?>
+
+Our singleton class can make only one connection and reuse it,let see how we can use our class
+
+<?php 
+$dbh = DB::connect();
+
+foreach ($dbh->query('SELECT * from agent') as $row){ 
+  print_r($row);
+}
+?>
+Share
+Edit
+Follow
+Flag
+edited Aug 28, 2024 at 11:57
+tirenweb's user avatar
+tirenweb
+31.9k7777 gold badges195195 silver badges313313 bronze badges
+answered Jul 20, 2016 at 9:12
+Big Zak's user avatar
+Big Zak
+1,1081313 silver badges1717 bronze badges
+2
+
+So what did you contribute with? You just created a singleton without explaining why nor did you touch on the subject of persistent connection. What does your code help with? Do you know what persistent connections are, why they are used and how does singleton help with that? – 
+Mjh
+ CommentedJul 20, 2016 at 9:33
+
+@Mjh I'm I mistaken or you downvoted the wrong answer? – 
+Jonatan Cloutier
+ CommentedAug 10, 2016 at 19:20
+1
+
+@Mjh I know what persistent connection is ,besides I added persistent support to the class, and more over , persistent connection and singleton class all aims at scalability , we are here to help each other with whats best and what might help others , again , the codes has been explained , thats i commented the codes, Thank you – 
+Big Zak
+ CommentedAug 11, 2016 at 9:43
+
+@JonatanCloutier - I didn't downvote the wrong answer. I downvoted yours because you don't know what persistent connection is, you assumed OP is using Apache and you provided a wrong answer. No offense meant. – 
+Mjh
+ CommentedAug 11, 2016 at 9:45
+3
+
+I've been scouring other Stack Overflow answers and this is the best PDO class that I've found. I disagree with others above that it is lacking in explanation. The comments in the code are clear. I found it very helpful. – 
+Derrick Miller
+ CommentedOct 11, 2017 at 19:31
+Add a comment  |  Show 5 more comments
+1
+
+It seems you need to close the cursor and release (assign null) to the last pdo statement object as well to close the connection.
+
+Also, what's important to understand about persistent connections is that they persist, but you are not guaranteed that you will neither:
+
+Be given back your last connection handler in further script executions
+Nor be reusing a previous connection, if it's still "busy". Busy may mean in a script, timing out etc... Connections instanciation may go on and on... See Fully Understanding PDO ATTR_PERSISTENT
+Share
+Edit
+Follow
+Flag
+edited May 23, 2017 at 12:02
+Community's user avatar
+CommunityBot
+111 silver badge
+answered Dec 22, 2016 at 16:50
+Sebas's user avatar
+Sebas
+21.6k99 gold badges6060 silver badges109109 bronze badges
+Add a comment
+-1
+
+From what I know from persistent connection you probably doesn't need it:
+
+you are on localhost so the connection is very fast and you wont save a lot from caching of your connection
+because of the underlying principal of Apache you have many thread that answer the client request and because of these multi-threading the connection is persistent in a single thread, not shared on all of them so you will see your number of connection go up in mysql until it's reach the ThreadLimit of apache
+there is a few risk that persistent connection cause problem to your app in the kind of dbLock or tableLock
+Now you might wanna do a bit more research about persistent connections if you still think that you really need it
+
+Share
+Edit
+Follow
+Flag
+edited Dec 22, 2016 at 16:18
+Your Common Sense's user avatar
+Your Common Sense
+158k4242 gold badges226226 silver badges371371 bronze badges
+answered Apr 8, 2011 at 7:59
+Jonatan Cloutier's user avatar
+Jonatan Cloutier
+93999 silver badges2727 bronze badges
+2
+
+Reasons for downvote: it's not relevant if someone is on localhost or not. Non-persistent connections spend file descriptors. Non-persistent connections initiate the connection handshake on every http request. 2) Apache or nginx persist the connection per thread and they perform the handshake once - that means every subsequent request won't have to go through this overhead. That's what you want. The reason why connections go up is because Apache is a really badly written piece of software that can't clean up properly. 3) WTF?! You just dropped random statement with 0 facts. – 
+Mjh
+ CommentedAug 11, 2016 at 9:50
+
+@Mjh thanks, at least I can understand why it's downvoted, while I couldn't without comment – 
+Jonatan Cloutier
+ CommentedAug 11, 2016 at 15:10
+1
+
+The answer can be improved and edited, in which case you will have my upvote, and I suggest you add a few extra bits of information to it. The problem is that nothing is black and white, persistent connections have their use, non-persistent ones do as well. Persistent connections are best used with php-fpm, while non-persistent should be used with Apache and mod_php because Apache tends to screw up otherwise. FastCGI applications such as php-fpm are fast(er) because of persistent connections, not only towards MySQL. – 
+Mjh
+ CommentedAug 11, 2016 at 15:11 
+
+I just have to refresh my mind, I haven't work at this level for a few years. In the mean time for people searching this subject, this express the main part of my answer stackoverflow.com/questions/50303/… – 
+Jonatan Cloutier
+ CommentedAug 11, 2016 at 15:15
+2
+
+Well that answer is 8 years old now, and it's not even correct. People usually read what they want to be true and upvote, without taking facts into account. Nowadays, applications are built much better and with more forward-thinking in mind. If you are going for a fast application, you'll use a persistent connection because it's always quicker to connect once instead of connect/disconnect upon every request (that actually really rapes the db and kills performance). – 
+Mjh
+ CommentedAug 11, 2016 at 15:19
+Add a comment  |  Show 1 more comment
+Start asking to get answers
+
+Find the answer to your question by asking.
+
+Explore related questions
+
+phpmysqlpdo
+See similar questions with these tags.
+
+PHP
+Collective
+ This question is in a collective: a subcommunity defined by tags with relevant content and experts.
+The Overflow Blog
+Renewing Chat on Stack Overflow
+AI isn’t stealing your job, it’s helping you find it
+Featured on Meta
+Will you help build our new visual identity?
+Upcoming initiatives on Stack Overflow and across the Stack Exchange network...
+Updated design for the new live activity panel experiment
+Further Experimentation with Comment Reputation Requirements
+Hot Meta Posts
+38
+Do Asciidoc or other markup languages constitute programming with regard to...
+17
+Community help needed to clean up goo.gl links in comments (by August 25)
+
+Report this ad
+Linked
+30
+Fully Understanding PDO ATTR_PERSISTENT
+58
+Persistent DB Connections - Yea or Nay?
+5
+PDO connection timed out in API, php-fpm restart solves it
+Related
+2737
+Why shouldn't I use mysql_* functions in PHP?
+189
+What are the disadvantages of using persistent connection in PDO
+3217
+Should I use the datetime or timestamp data type in MySQL?
+2769
+How can I prevent SQL injection in PHP?
+2241
+When should I use 'self' over '$this'?
+2821
+How can I import an SQL file using the command line in MySQL?
+1
+PDO persistent connections cache requirement
+2848
+How do I get a YouTube video thumbnail from the YouTube API?
+744
+Are PDO prepared statements sufficient to prevent SQL injection?
+2651
+How do I check if a string contains a specific word?
+Hot Network Questions
+Problem with differential backups, after a problem with a full backup
+Is laser engraving on an interstellar object feasible?
+Dropdown width with very long options
+What's the difference between democracy and totalitarianism if, even in democracy, we must respect laws set by parties we didn't vote for?
+Can Suspended Sentence be cast Twice?
+Java: A fractal algorithm shows prime number patterning
+In the US, can I contribute to my Roth IRA, ahead of the time I get the earned income?
+What sort of weather seal is missing on the bottom of my exterior door?
+Which set has greater cardinality and why?
+Samba(Linux)/Windows interaction
+How to reduce hyphenations
+Collect coefficient of sum of terms in Mathematica
+Did recently killed Al Jazeera journalist Anas al-Sharif call the Oct 7 attackers "heroes"?
+SPDX: GPL-2.0-or-later vs the `+` operator
+Reskinning creatures without accidentally hiding how dangerous/safe they are
+What violent acts or injuries are attributable to Palestine Action?
+Make separate appendix table of contents and remove appendix chapters and sections from main toc
+New Bass strings too tight
+Sickness after admitted for Masters
+How can a theory be discarded if the Duhem–Quine thesis suggests it can’t be falsified
+How to deal with this problem in hedonism?
+VLOOKUP with wildcards
+How can I tell that two analytical methods are orthogonal?
+Can high schoolers post to arXiv or write preprints?
+
+
+
+
+Stack Overflow
+Questions
+Help
+Chat
+Products
+Teams
+Advertising
+Talent
+Company
+About
+Press
+Work Here
+Legal
+Privacy Policy
+Terms of Service
+Contact Us
+Cookie Settings
+Cookie Policy
+Stack Exchange Network
+Technology
+Culture & recreation
+Life & arts
+Science
+Professional
+Business
+API
+Data
+Blog
+Facebook
+Twitter
+LinkedIn
+Instagram
+Site design / logo © 2025 Stack Exchange Inc; user contributions licensed under CC BY-SA . rev 2025.8.13.32804

@@ -23,6 +23,7 @@ class Connection
             $dsn = 'mysql:host=' . $config['host'] . ';dbname=' . $config['database'] . ';charset=utf8';
             $this->connection = new PDO($dsn, $config['user'], $config['password']);
             $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $this->connection->setAttribute(PDO::ATTR_PERSISTENT, true);
         } catch (PDOException $e) {
             Log::add('PDO Connection failed: ' . $e->getMessage() . ' configs:' . json_encode($config), Log::ERROR_TYPE);
             throw new Exception('Database connection error');
