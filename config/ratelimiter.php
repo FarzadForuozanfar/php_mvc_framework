@@ -1,6 +1,6 @@
 <?php
 
 
-define("DRIVER", env('RATE_LIMITER_DRIVER', 'session'));
-define("MAX_ATTEMPTS", 50);
-define("DECAY_MINUTES", 1);
+define("RATE_LIMITER_DRIVER", env('RATE_LIMITER_DRIVER', 'session'));
+define("RATE_LIMITER_MAX_ATTEMPTS", 50);
+define("RATE_LIMITER_DECAY_MINUTES", 1);
